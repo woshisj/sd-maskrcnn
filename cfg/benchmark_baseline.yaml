@@ -1,4 +1,4 @@
-output_dir: benchmark_baseline_results
+output_dir: /nfs/diskstation/projects/dex-net/segmentation/results/baseline_test
 save_conf_name: config.yaml
 
 detector:
@@ -22,7 +22,7 @@ detector:
   gop:
 
 test:
-  path: datasets/wisdom/wisdom-real/high-res
+  path: /nfs/diskstation/projects/dex-net/segmentation/datasets/wisdom/wisdom-real/high-res
   images: depth_ims_numpy           # PCL methods require depth_ims_numpy, GOP requires color_ims
   masks: modal_segmasks
   bin_masks: segmasks_filled        # Directory containing bin masks

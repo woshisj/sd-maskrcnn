@@ -1,8 +1,8 @@
-output_dir: benchmark_results
+output_dir: /nfs/diskstation/projects/dex-net/segmentation/results/benchmark_results
 save_conf_name: config.yaml
 
 model:
-  path: models/sd_maskrcnn.h5
+  path: /nfs/diskstation/projects/dex-net/segmentation/models/sd_maskrcnn.h5
   mode: inference
   settings:
     mean_pixel: [128,128,128]
@@ -15,7 +15,7 @@ model:
     detection_nms_threshold: 0.35
 
 test:
-  path: datasets/wisdom/wisdom-real/high-res/
+  path: /nfs/diskstation/projects/dex-net/segmentation/datasets/wisdom/wisdom-real/high-res/
   images: depth_ims
   masks: modal_segmasks
   indices: test_indices.npy
