@@ -5,6 +5,7 @@ model:
   path: /nfs/diskstation/projects/dex-net/segmentation/models/sd_maskrcnn.h5
   mode: inference
   settings:
+    image_channel_count: 3
     mean_pixel: [128,128,128]
     backbone: resnet35
     num_classes: 2

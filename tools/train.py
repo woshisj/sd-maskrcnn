@@ -15,19 +15,18 @@ from mrcnn import model as modellib, utils as utilslib
 def train(config):
 
     # Training dataset
-    dataset_train = ImageDataset(config['dataset']['path'], config['dataset']['images'], config['dataset']['masks'])
+    dataset_train = ImageDataset(config)
     dataset_train.load(config['dataset']['train_indices'], augment=True)
     dataset_train.prepare()
 
     # Validation dataset
-    dataset_val = ImageDataset(config['dataset']['path'], config['dataset']['images'], config['dataset']['masks'])
+    dataset_val = ImageDataset(config)
     dataset_val.load(config['dataset']['val_indices'])
     dataset_val.prepare()
 
     # Load config
     train_config = MaskConfig(config['model']['settings'])
     train_config.STEPS_PER_EPOCH = dataset_train.indices.size/(train_config.IMAGES_PER_GPU*train_config.GPU_COUNT)
-    # train_config.STEPS_PER_EPOCH = 5
     train_config.display()
 
     # Create the model.
@@ -51,16 +50,21 @@ def train(config):
         weights_path = config['model']['weights']
 
     # Load weights
+    exclude_layers = []
     print("Loading weights ", weights_path)
     if config['model']['weights'].lower() == "coco":
         # Exclude the last layers because they require a matching
         # number of classes
-        model.load_weights(weights_path, by_name=True, exclude=[
-            "mrcnn_class_logits", "mrcnn_bbox_fc",
-            "mrcnn_bbox", "mrcnn_mask"])
-    elif config['model']['weights'].lower() == "new":
-        model.set_log_dir()
-    else:
+        if config['model']['settings']['image_channel_count'] == 1:
+            exclude_layers = ['conv1']
+        exclude_layers += ["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"]
+        print(exclude_layers)
+        model.load_weights(weights_path, by_name=True, exclude=exclude_layers)
+    elif config['model']['weights'].lower() == "imagenet":
+        if config['model']['settings']['image_channel_count'] == 1:
+            exclude_layers = ['conv1']
+        model.load_weights(weights_path, by_name=True, exclude=exclude_layers)
+    elif config['model']['weights'].lower() != "new":
         model.load_weights(weights_path, by_name=True)
 
     # save config in run folder

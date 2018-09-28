@@ -33,18 +33,21 @@ $base_path/
 """
 
 class ImageDataset(utils.Dataset):
-    def __init__(self, base_path, images, masks):
-        assert base_path != "", "You must provide the path to a dataset!"
+    def __init__(self, config):
+        assert config['dataset']['path'] != "", "You must provide the path to a dataset!"
 
-        self.base_path = base_path
-        self.images = images
-        self.masks = masks
+        self.dataset_config = config['dataset']
+        self.base_path = config['dataset']['path']
+        self.images = config['dataset']['images']
+        self.masks = config['dataset']['masks']
+
+        self._channels = config['model']['settings']['image_channel_count']
         super().__init__()
 
-    def load(self, imset, augment=False):
+    def load(self, indices_file, augment=False):
         
         # Load the indices for imset.
-        split_file = os.path.join(self.base_path, '{:s}'.format(imset))
+        split_file = os.path.join(self.base_path, '{:s}'.format(indices_file))
         self.image_id = np.load(split_file)
         self.add_class('clutter', 1, 'fg')
 
@@ -79,12 +82,17 @@ class ImageDataset(utils.Dataset):
             image = np.load(self.image_info[image_id]['path']).squeeze()
         else:
             image = skimage.io.imread(self.image_info[image_id]['path'])
-        # If grayscale. Convert to RGB for consistency.
-        if image.ndim != 3:
+        
+        if self._channels == 1 and image.ndim == 2:
+            image = image[:,:,np.newaxis]
+        elif self._channels == 1 and image.ndim == 3:
+            image = image[:,:,[0]]
+        elif self._channels == 3 and image.ndim != 1:
             image = skimage.color.gray2rgb(image)
+        
         # If has an alpha channel, remove it for consistency
-        if image.shape[-1] == 4:
-            image = image[..., :3]
+        # if image.shape[-1] == 4:
+        #     image = image[..., :3]
         return image
 
     def image_reference(self, image_id):
@@ -96,7 +104,6 @@ class ImageDataset(utils.Dataset):
 
     def load_mask(self, image_id):
         # loads mask from path
-
         info = self.image_info[image_id]
         _image_id = info['id']
         Is = []

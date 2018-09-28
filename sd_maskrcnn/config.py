@@ -27,6 +27,8 @@ class MaskConfig(Config):
 
   USE_MINI_MASK = False
 
+  MAX_GT_INSTANCES = 20
+
   # Use smaller anchors because our image and objects are small
   # RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128)  # anchor side in pixels
 

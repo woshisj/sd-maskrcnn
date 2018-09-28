@@ -15,6 +15,7 @@ import argparse
 from tqdm import tqdm
 import numpy as np
 import skimage.io as io
+from copy import copy
 import matplotlib.pyplot as plt
 
 from autolab_core import YamlConfig
@@ -52,11 +53,14 @@ def benchmark(config):
     model.load_weights(config['model']['path'], by_name=True)
 
     # Create dataset
-    test_dataset = ImageDataset(config['test']['path'], config['test']['images'], config['test']['masks'])
+    test_dataset = ImageDataset(config)
     test_dataset.load(config['test']['indices'])
     test_dataset.prepare()
 
-    vis_dataset = ImageDataset(config['test']['path'], 'depth_ims', 'modal_segmasks')
+    vis_config = copy(config)
+    vis_config['test']['images'] = 'depth_ims'
+    vis_config['test']['masks'] = 'modal_segmasks'
+    vis_dataset = ImageDataset(config)
     vis_dataset.load(config['test']['indices'])
     vis_dataset.prepare()
 
