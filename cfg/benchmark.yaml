@@ -2,7 +2,7 @@ output_dir: /nfs/diskstation/projects/dex-net/segmentation/results/benchmark_res
 save_conf_name: config.yaml
 
 model:
-  path: /nfs/diskstation/projects/dex-net/segmentation/models/sd_maskrcnn.h5
+  path: /nfs/diskstation/projects/dex-net/segmentation/models/depth_50k_newest20180913T0337/mask_rcnn_depth_50k_newest_0012.h5
   mode: inference
   settings:
     image_channel_count: 3
@@ -15,7 +15,7 @@ model:
     rpn_nms_threshold: 1.0
     detection_nms_threshold: 0.35
 
-test:
+dataset:
   path: /nfs/diskstation/projects/dex-net/segmentation/datasets/wisdom/wisdom-real/high-res/
   images: depth_ims
   masks: modal_segmasks

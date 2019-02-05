@@ -54,14 +54,14 @@ def benchmark(config):
 
     # Create dataset
     test_dataset = ImageDataset(config)
-    test_dataset.load(config['test']['indices'])
+    test_dataset.load(config['dataset']['indices'])
     test_dataset.prepare()
 
     vis_config = copy(config)
-    vis_config['test']['images'] = 'depth_ims'
-    vis_config['test']['masks'] = 'modal_segmasks'
+    vis_config['dataset']['images'] = 'depth_ims'
+    vis_config['dataset']['masks'] = 'modal_segmasks'
     vis_dataset = ImageDataset(config)
-    vis_dataset.load(config['test']['indices'])
+    vis_dataset.load(config['dataset']['indices'])
     vis_dataset.prepare()
 
     ######## BENCHMARK JUST CREATES THE RUN DIRECTORY ########
@@ -71,7 +71,7 @@ def benchmark(config):
     # If we want to remove bin pixels, pass in the directory with
     # those masks.
     if config['mask']['remove_bin_pixels']:
-        bin_mask_dir = os.path.join(config['test']['path'], config['mask']['bin_masks'])
+        bin_mask_dir = os.path.join(config['dataset']['path'], config['mask']['bin_masks'])
         overlap_thresh = config['mask']['overlap_thresh']
     else:
         bin_mask_dir = False
@@ -127,6 +127,7 @@ def detect(run_dir, inference_config, model, dataset, bin_mask_dir=False, overla
     # Feed images into model one by one. For each image, predict, save, visualize?
     image_ids = dataset.image_ids
     indices = dataset.indices
+    times = []
     print('MAKING PREDICTIONS')
     for image_id in tqdm(image_ids):
         # Load image and ground truth data and resize for net
@@ -137,6 +138,7 @@ def detect(run_dir, inference_config, model, dataset, bin_mask_dir=False, overla
         # Run object detection
         results = model.detect([image], verbose=0)
         r = results[0]
+        times.append(r['time'])
 
         # If we choose to mask out bin pixels, load the bin masks and
         # transform them properly.
@@ -193,7 +195,7 @@ def detect(run_dir, inference_config, model, dataset, bin_mask_dir=False, overla
         }
         r_info_path = os.path.join(pred_info_dir, 'image_{:06d}.npy'.format(image_id))
         np.save(r_info_path, r_info)
-
+    print('Took {} s'.format(sum(times)))
     print('Saved prediction masks to:\t {}'.format(pred_dir))
     print('Saved prediction info (bboxes, scores, classes) to:\t {}'.format(pred_info_dir))
     print('Saved transformed GT segmasks to:\t {}'.format(resized_segmask_dir))
