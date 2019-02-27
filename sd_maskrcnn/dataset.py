@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 from tqdm import tqdm
-
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2
 import skimage.io
 import numpy as np

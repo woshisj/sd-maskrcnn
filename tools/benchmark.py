@@ -11,6 +11,7 @@ CUDA_VISIBLE_DEVICES=0 python tools/benchmark.py --config cfg/benchmark.yaml
 
 import os
 import sys
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 import argparse
 from tqdm import tqdm
 import numpy as np
