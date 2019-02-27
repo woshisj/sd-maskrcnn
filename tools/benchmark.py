@@ -251,7 +251,7 @@ if __name__ == "__main__":
 
     # parse the provided configuration file, set tf settings, and benchmark
     conf_parser = argparse.ArgumentParser(description="Benchmark SD Mask RCNN model")
-    conf_parser.add_argument("--config", action="store", default="cfg/benchmark.yaml",
+    conf_parser.add_argument("--config", action="store", default="../cfg/benchmark.yaml",
                                dest="conf_file", type=str, help="path to the configuration file")
     conf_args = conf_parser.parse_args()
 
