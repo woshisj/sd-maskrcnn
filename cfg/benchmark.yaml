@@ -1,4 +1,4 @@
-output_dir: result/benchmark_results
+output_dir: ../result/benchmark_results
 save_conf_name: config.yaml
 
 model:
